@@ -1,0 +1,8 @@
+# /etc/opt/ansible-vars.yaml - our local variables for Ansible
+---
+# parameters for our "own CA" playbooks:
+own_ca:
+  ca_key_path: '/etc/ssl/private/ansible-ca.key'
+  ca_cert_path: '/usr/local/share/ca-certificates/ansible-ca.crt'
+  # CA key password, generated with: openssl rand -base64 20
+  secret_ca_passphrase: 'REPLACE_WITH_OUTPUT_FROM_ABOVE_COMMAND'

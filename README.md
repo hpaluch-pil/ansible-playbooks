@@ -59,3 +59,9 @@ Linting:
 - Warning! There are currently reported several Ansible Lint errors (but I don't like new verbose syntax pushed by RedHat)
 - run: `packages/check-yaml.sh`
 
+# Example: custom "own" CA certificate
+
+There are playbooks to create custom CA certificate and make it trusted.
+Please follow [own-ca/README.md](own-ca/README.md) for instructions.
+
+
