@@ -61,7 +61,8 @@ Linting:
 
 # Example: custom "own" CA certificate
 
-There are playbooks to create custom CA certificate and make it trusted.
-Please follow [own-ca/README.md](own-ca/README.md) for instructions.
+There are playbooks to create custom CA certificate make it trusted and use it
+to generate and sign Web server certificate and add it to local nginx web
+server.  Please follow [own-ca/README.md](own-ca/README.md) for instructions.
 
 
