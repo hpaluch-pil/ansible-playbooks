@@ -35,3 +35,21 @@ Next invoke `./run.sh 10-create-ca.yaml`, it will:
   ```shell
   openssl x509 -in /usr/local/share/ca-certificates/ansible-ca.crt -text -noout | sed -n '1,/Modulus/p'
   ```
+
+Now we have to create certificate for our WWW server using:
+```shell
+./run.sh 20-sign-cert.yaml
+```
+
+You can then use for your web server:
+- private key:  `/etc/ssl/private/ansible-www.key`
+- certificate: `/etc/ssl/certs/ansible-www.crt`
+- bundle: recommended that Web server will provide both certificates and CA certs (from leaf to root)
+  - you can create bundle with:
+    ```shell
+    cat /etc/ssl/certs/ansible-www.crt /usr/local/share/ca-certificates/ansible-ca.crt \
+       > /etc/ssl/certs/anwble-www-bundle.crt
+    ```
+
+How to use in your Web server:
+- TODO

@@ -1,0 +1,46 @@
+# 20-sign-cert.yaml - create and sign our WWW certificate with our own CA
+# yamllint disable rule:line-length
+# Based on: https://docs.ansible.com/ansible/latest/collections/community/crypto/docsite/guide_ownca.html
+---
+- name: Run local script
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  tasks:
+    - name: Load PKI dir and CA and WWW cert configuration
+      ansible.builtin.include_vars:
+        file: /etc/opt/ansible-vars.yaml
+        name: lvars
+
+    # now tough stuff - generating our own key (secret is in /etc/opt/ansible-vars.yaml)
+    # from: https://docs.ansible.com/ansible/latest/collections/community/crypto/docsite/guide_ownca.html#how-to-create-a-small-ca
+    - name: Create Cert private key without password
+      community.crypto.openssl_privatekey:
+        path: "{{ lvars.own_ca.www_key_path }}"
+    - name: Create certificate signing request (CSR) for new certificate
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: "{{ lvars.own_ca.www_key_path }}"
+        subject_alt_name:
+          - "DNS:{{ ansible_fqdn }}"
+      register: csr
+    - name: Sign certificate with our CA
+      community.crypto.x509_certificate_pipe:
+        csr_content: "{{ csr.csr }}"
+        provider: ownca
+        ownca_path: "{{ lvars.own_ca.ca_cert_path }}"
+        ownca_privatekey_path: "{{ lvars.own_ca.ca_key_path }}"
+        ownca_privatekey_passphrase: "{{ lvars.own_ca.secret_ca_passphrase }}"
+        ownca_not_after: +365d  # valid for one year
+        ownca_not_before: "-1d"  # valid since yesterday
+      register: certificate
+    - name: Write certificate file
+      ansible.builtin.copy:
+        dest: "{{ lvars.own_ca.www_cert_path }}"
+        content: "{{ certificate.certificate }}"
+        mode: '644'
+    - name: Debug WWW key path
+      ansible.builtin.debug:
+        msg: "Written WWW key to: '{{ lvars.own_ca.www_key_path }}'"
+    - name: Print WWW cert pathname
+      ansible.builtin.debug:
+        msg: "Written WWW cert to: '{{ lvars.own_ca.www_cert_path }}'"
