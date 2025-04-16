@@ -13,9 +13,16 @@ https://github.com/hpaluch-pil/pil-ansible-roles
 
 # Setup
 
-Tested on Debian 12. Install:
+Tested on Debian 12 and Fedora 41.
+
+On Debian 12 Install:
 ```shell
 sudo apt-get install ansible ansible-lint yamllint
+```
+
+On Fedora 41 run:
+```shell
+sudo dnf install yamllint ansible python3-ansible-lint
 ```
 
 # Example: install packages

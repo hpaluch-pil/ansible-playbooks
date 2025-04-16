@@ -28,4 +28,4 @@
         - mc
         - unzip
         - pinfo
-      when: ansible_pkg_mgr == 'dnf'
+      when: ansible_pkg_mgr == 'dnf' or ansible_pkg_mgr == 'dnf5'
