@@ -17,7 +17,7 @@ Tested on Debian 12 and Fedora 41.
 
 On Debian 12 Install:
 ```shell
-sudo apt-get install ansible ansible-lint yamllint
+sudo apt-get install ansible ansible-lint yamllint python3-apt
 ```
 
 On Fedora 41 run:
