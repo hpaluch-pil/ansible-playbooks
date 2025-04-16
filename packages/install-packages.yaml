@@ -1,0 +1,31 @@
+# install-packages.yaml - install favorite packages
+# Dry-run with: ansible-playbook -b -c local -C install-packages.yaml
+# Run with (removed '-C'): ansible-playbook -b -c local install-packages.yaml
+---
+- name: Run local script
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  tasks:
+    - name: Install favourite packages - APT
+      apt: name={{ item }}
+      with_items:
+        - git
+        - tmux
+        - vim
+        - mc
+        - unzip
+        - pinfo
+        - net-tools  # gimme back ifconfig!
+      when: ansible_pkg_mgr == 'apt'
+
+    - name: Install favourite packages - DNF
+      dnf: name={{ item }}
+      with_items:
+        - git-core
+        - tmux
+        - vim-enhanced
+        - mc
+        - unzip
+        - pinfo
+      when: ansible_pkg_mgr == 'dnf'
