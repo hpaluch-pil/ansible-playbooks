@@ -27,6 +27,10 @@ sudo dnf install yamllint ansible python3-ansible-lint
 
 # Example: install packages
 
+> [!WARNING]
+> If your `sudo` command requires password you have to add `-K` parameter to `ansible-playbook` commands
+> (runs from scripts `dry-run.sh` and `run.sh`)
+
 Now test package installation in dry mode running:
 ```shell
 packages/dry-run.sh
