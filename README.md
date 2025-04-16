@@ -35,12 +35,24 @@ Now test package installation in dry mode running:
 ```shell
 packages/dry-run.sh
 ```
-Note: planned changes will be printed in "yellow" while matching state (no operation needed) is printed
-in "green"
 
-To really install packages to your local system run:
+Note: planned changes will be printed in "yellow" while matching state (no
+operation needed) is printed in "green", skipped items are "cyan".
+
+To really install packages on your local system run:
+
 ```shell
 packages/run.sh
+```
+
+Note: you can notice variable `ansible_pkg_mgr` in
+`packages/install-packages.yaml`. It depends on your Linux distribution and is
+so called "facts". To list known "facts" on your system you can run provided
+script `./gather-facts.sh`. Here is example how to extract package manager with
+`jq` utility:
+
+```shell
+./gather-facts.sh | jq -r '.ansible_facts.ansible_pkg_mgr'
 ```
 
 Linting:
