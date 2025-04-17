@@ -38,22 +38,23 @@ Next invoke `./run.sh 10-create-ca.yaml`, it will:
 
 Now we have to create certificate for our WWW server using:
 ```shell
+# CA bundle must be removed to be recreated
+sudo rm -f /etc/ssl/certs/ansible-www-bundle.crt
 ./run.sh 20-sign-cert.yaml
 ```
 
 You can then use for your web server:
-- private key:  `/etc/ssl/private/ansible-www.key`
-- certificate: `/etc/ssl/certs/ansible-www.crt`
-- bundle: recommended that Web server will provide both certificates and CA certs (from leaf to root)
-  - you can create bundle with:
-    ```shell
-    cat /etc/ssl/certs/ansible-www.crt /usr/local/share/ca-certificates/ansible-ca.crt \
-       > /etc/ssl/certs/ansible-www-bundle.crt
-    ```
+- web private key:  `/etc/ssl/private/ansible-www.key`
+- web certificate (normally not used alone): `/etc/ssl/certs/ansible-www.crt`
+- CA bundle (contains web certificate + CA certificate): `/etc/ssl/certs/ansible-www-bundle.crt`
+  - it is preferred when web server returns CA bundle that contains not just
+    certificate but also all CA certificates in chain, so browser can validate
+    it without fetching CA certificates from Internet (without bundle, many browsers
+    will simply treat such certificate as not trusted)
 
 How to use in your Web server:
-- example for Debian
-- install stock nginx with:
+- example for Debian:
+- install stock nginx web server with:
   ```shell
   sudo apt-get install nginx
   ```
@@ -78,7 +79,7 @@ server {
 }
 ```
 
-- enable this site using:
+- enable this `ssl` site using:
   ```shell
   # as root
   cd /etc/nginx/sites-enabled

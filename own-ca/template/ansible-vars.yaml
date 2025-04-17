@@ -9,3 +9,4 @@ own_ca:
   # Web certificate paths, signed with above own CA:
   www_key_path: '/etc/ssl/private/ansible-www.key'
   www_cert_path: '/etc/ssl/certs/ansible-www.crt'
+  www_bundle_path: '/etc/ssl/certs/ansible-www-bundle.crt'

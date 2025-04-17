@@ -38,6 +38,13 @@
         dest: "{{ lvars.own_ca.www_cert_path }}"
         content: "{{ certificate.certificate }}"
         mode: '644'
+    - name: Create certificate bundle
+      ansible.builtin.shell:
+        cmd: 'cat {{ lvars.own_ca.www_cert_path }} {{ lvars.own_ca.ca_cert_path }} > {{ lvars.own_ca.www_bundle_path }}'
+        creates: '{{ lvars.own_ca.www_bundle_path }}'
+    - name: Debug WWW bundle path
+      ansible.builtin.debug:
+        msg: "Written WWW bundle to: '{{ lvars.own_ca.www_bundle_path }}'"
     - name: Debug WWW key path
       ansible.builtin.debug:
         msg: "Written WWW key to: '{{ lvars.own_ca.www_key_path }}'"
