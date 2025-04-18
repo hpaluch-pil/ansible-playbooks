@@ -22,6 +22,7 @@
         privatekey_path: "{{ lvars.own_ca.www_key_path }}"
         subject_alt_name:
           - "DNS:{{ ansible_fqdn }}"
+        subject_alt_name_critical: true  # required by strict clients when Subject/CN is empty (RFC5280), https://stackoverflow.com/a/56169246
       register: csr
     - name: Sign certificate with our CA
       community.crypto.x509_certificate_pipe:
