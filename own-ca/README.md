@@ -7,7 +7,7 @@ Here is Ansible playbook to create our own CA (and alter) sign certificates with
 - First install Ansible following parent [../README.md](../README.md)
 - next copy:
   ```shell
-  sudo cp template/ansible-vars.yaml /etc/opt/
+  sudo cp template/debian/ansible-vars.yaml /etc/opt/
   ```
 - next replace text `REPLACE_WITH_OUTPUT_FROM_ABOVE_COMMAND` in file `/etc/opt/ansible-vars.yaml`
   with output of command `openssl rand -base64 20`
@@ -18,11 +18,14 @@ Now run validation of all YAML files (should run without error):
 ./check-yaml.sh
 ```
 
-Next invoke `./run.sh 10-create-ca.yaml`, it will:
+Next invoke `./run.sh 10-create-ca.yaml` (or `./run.sh -K 10-create-ca.yaml` if
+your `sudo` command requires password), it will:
 - generate encrypted private key for our CA in file `/etc/ssl/private/ansible-ca.key`
 - generate our CA Certificate in `/usr/local/share/ca-certificates/ansible-ca.crt`
-- to make this CA trusted you should run `update-ca-certificates -v`
-- it should report
+- to make this CA trusted you should run
+  - on Debian:  `update-ca-certificates -v`
+  - on Fedora: `update-ca-trust`
+- on Debian it should report
 
   ```
   ...
@@ -33,13 +36,20 @@ Next invoke `./run.sh 10-create-ca.yaml`, it will:
 - you can print content of our CA certificate with:
 
   ```shell
+  # on Debian:
   openssl x509 -in /usr/local/share/ca-certificates/ansible-ca.crt -text -noout | sed -n '1,/Modulus/p'
+  # on Fedora:
+  openssl x509 -in /etc/pki/ca-trust/source/anchors/ansible-ca.crt -text -noout | sed -n '1,/Modulus/p'
   ```
 
 Now we have to create certificate for our WWW server using:
 ```shell
 # CA bundle must be removed to be recreated
+# on Debian:
 sudo rm -f /etc/ssl/certs/ansible-www-bundle.crt
+# on Fedora:
+sudo rm -f /etc/pki/tls/certs/ansible-www-bundle.crt
+# common: add "-K" in the middle if your sudo requires password:
 ./run.sh 20-sign-cert.yaml
 ```
 
