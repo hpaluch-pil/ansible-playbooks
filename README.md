@@ -25,6 +25,11 @@ On Fedora 41 run:
 sudo dnf install yamllint ansible python3-ansible-lint
 ```
 
+On [Void Linux](https://voidlinux.org/) run:
+```shell
+sudo xbps-install -u ansible python3-yamllint python3-ansible-lint
+```
+
 # Example: install packages
 
 > [!WARNING]

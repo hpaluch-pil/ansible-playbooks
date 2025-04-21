@@ -5,9 +5,17 @@ Here is Ansible playbook to create our own CA (and alter) sign certificates with
 # Setup
 
 - First install Ansible following parent [../README.md](../README.md)
+- for [Void Linux](https://voidlinux.org/) you have to prepare directories:
+  ```shell
+  mkdir -p /etc/opt/ /etc/ssl/private /usr/local/share/ca-certificates
+  chmod 700 /etc/ssl/private
+  ```
 - next copy:
   ```shell
-  sudo cp template/debian/ansible-vars.yaml /etc/opt/
+  # use this path for Debian or Void Linux:
+  sudo cp template/debian/ansible-vars.yaml /etc/opt
+  # use this path for Fedora:
+  sudo cp template/fedora/ansible-vars.yaml /etc/opt
   ```
 - next replace text `REPLACE_WITH_OUTPUT_FROM_ABOVE_COMMAND` in file `/etc/opt/ansible-vars.yaml`
   with output of command `openssl rand -base64 20`
@@ -23,7 +31,7 @@ your `sudo` command requires password), it will:
 - generate encrypted private key for our CA in file `/etc/ssl/private/ansible-ca.key`
 - generate our CA Certificate in `/usr/local/share/ca-certificates/ansible-ca.crt`
 - to make this CA trusted you should run
-  - on Debian:  `update-ca-certificates -v`
+  - on Debian or Void Linux:  `update-ca-certificates -v`
   - on Fedora: `update-ca-trust`
 - on Debian it should report
 
@@ -36,7 +44,7 @@ your `sudo` command requires password), it will:
 - you can print content of our CA certificate with:
 
   ```shell
-  # on Debian:
+  # on Debian or Void Linux:
   openssl x509 -in /usr/local/share/ca-certificates/ansible-ca.crt -text -noout | sed -n '1,/Modulus/p'
   # on Fedora:
   openssl x509 -in /etc/pki/ca-trust/source/anchors/ansible-ca.crt -text -noout | sed -n '1,/Modulus/p'
@@ -66,9 +74,14 @@ How to use in your Web server:
 - example for Debian:
 - install stock nginx web server with:
   ```shell
+  # on Debian:
   sudo apt-get install nginx
+  # on Void Linux:
+  sudo xbps-install -u nginx
   ```
-- create file `/etc/nginx/sites-available/ssl` with contents:
+- on Void Linux just append `443` section below to `/etc/nginx/nginx.conf`
+  (there is template, but commented out)
+- on Debian create file `/etc/nginx/sites-available/ssl` with contents:
 
 ```nginx
 # /etc/nginx/sites-available/ssl
@@ -98,6 +111,11 @@ server {
 - verify configuration and restart nginx:
   ```shell
   nginx -t
+  # on Void Linux:
+  ( /etc/runit/runsvdir/default && ln -s /etc/sv/nginx )
+  sv restart nginx
+ 
+  # on Debian or Fedora:
   systemctl restart nginx
   ```
 - test with local curl - note that it should accept our Web certificate wit our own CA (because
